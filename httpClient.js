@@ -2,35 +2,20 @@
 const axios = require("axios").default;
 
 module.exports = class HttpClient {  
-  constructor() {
+  constructor(url, username, password) {
     const client = axios.create({
-      // const url = "http://localhost:18888";
-      // const username = "user";
-      // const password = "pass";
-    
-      baseURL: "http://localhost:18888",
+      baseURL: url,
       auth: {
-        username: "user",
-        password: "pass"
+        username,
+        password
       }
     });
     this.client = client;
   }
   
-  get() {
-    this.client.get("/basicAuth")
-      .then(res => {
-        // handle success
-        console.log(res.data);
-      })
-      .catch(err => {
-        // handle error
-        console.log(err.data);
-      })
-      .then(() => {
-        // always executed
-        console.log("always executed");
-      });
+  get(path, callback) {
+    return this.client.get(path)
+      .then(res => callback(res.status, res.data))
+      .catch(err => callback(err.response.status, err.response.data));
   }
-//  handler();  
 }
